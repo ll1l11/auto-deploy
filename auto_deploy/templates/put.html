@@ -1,0 +1,36 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "layout.html" %}
+
+{% block content -%}
+{{ wtf.quick_form(form, method='PUT', id='wtf-form') }}
+{%- endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+$(document).ready(function() {
+    $("#wtf-form").on("submit", function() {
+        var alias = $("#alias").val();
+        if (!alias) {
+            alert("Alias can't be blank");
+            return false;
+        }
+        url = "{{ url_for('.item') }}" + alias; 
+        $.ajax({
+            url: url,
+            type: "PUT",
+            data: $('#wtf-form').serialize(),
+            success: function(data) {
+                if (data && data.errcode) {
+                    alert(data.errmsg);
+                } else {
+                    window.location = "{{ url_for('general.index') }}";
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
+{% endblock %}
+

@@ -1,0 +1,10 @@
+{% extends "bootstrap/base.html" %}
+{% block navbar %}
+<div class="navbar navbar-default">
+    <ul class="nav navbar-nav">
+        <li><a href="/">Home</a></li>
+        <li><a href="{{ url_for('script.item') }}">Add</a></li>
+    </ul>
+</div>
+{% endblock %}
+

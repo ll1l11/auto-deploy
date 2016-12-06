@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+{% block content %}
+<div>
+    设置方式： settings -> webhooks url中填入：
+    <pre> 
+    http://deploy-test.xxkuaipao.com/deploy/<设置的脚本别名>
+    </pre>
+<div>
+<table class="table">
+    <tr>
+        <th>Alias</th>
+        <th>URL</th>
+        <th>Desc</th>
+        <th>Operation</th>
+    </tr>
+{% for item in items %}
+    <tr>
+        <td><a href="{{ url_for('script.item', alias=item.alias) }}">{{ item.alias }}</a></td>
+        <td><input type="text" class="form-control" value="{{ url_for('deploy.deploy', alias=item.alias, _external=True) }}" /></td>
+        <td>{{ item.desc }}</td>
+        <td><button class="btn-delete" data-alias="{{ item.alias }}">Delete</button></td>
+    </tr>
+{% endfor %}
+</table>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script>
+$(document).ready(function() {
+    $("input[type=text]").on("click", function () {
+        $(this).select();
+    });
+    $(".btn-delete").on("click", function() {
+        var alias = $(this).data("alias");
+        if(!confirm("Confirm delete " + alias + "?")) {
+            return false
+        }
+
+        var url = "{{ url_for('script.item') }}" + alias;
+        $.ajax({
+            url: url,
+            type: "DELETE",
+            success: function(data, textStatus, jqXHR) {
+                if (jqXHR.status == '204') {
+                    window.location = "{{ url_for('.index') }}";
+                } else if (data && data.errcode) {
+                    alert(data.errmsg);
+                } else { 
+                    console.log(data);
+                    alert("error: " + data);
+                }
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
+
